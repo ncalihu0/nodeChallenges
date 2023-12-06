@@ -1,0 +1,62 @@
+[
+    {
+        "employeeID": 1,
+        "name": "John Smith",
+        "salary": 10000,
+        "department": "Human resources"
+    },
+    {
+        "employeeID": 2,
+        "name": "Sarah Lee",
+        "salary": 20000,
+        "department": "Finance"
+    },
+    {
+        "employeeID": 3,
+        "name": "Erick Rodea",
+        "salary": 50000,
+        "department": "Managemement"
+    },
+    {
+        "employeeID": 4,
+        "name": "Felicia Brown",
+        "salary": 40000,
+        "department": "Sales"
+    },
+    {
+        "employeeID": 5,
+        "name": "Oscar Cline",
+        "salary": 70000,
+        "department": "Accounting"
+    },
+    {
+        "employeeID": 6,
+        "name": "Jane Doe",
+        "salary": 30000,
+        "department": "Communication"
+    },
+    {
+        "employeeID": 7,
+        "name": "Ariel Dove",
+        "salary": 60000,
+        "department": "Production"
+    },
+    {
+        "employeeID": 8,
+        "name": "Miriam Yam",
+        "salary": 50000,
+        "department": "Sales"
+    },
+    {
+        "employeeID": 9,
+        "fname": "Elise Cinder",
+        "salary": 40000,
+        "department": "Communication"
+    },
+    {
+        "employeeID": 10,
+        "name": "Cristian Hernandez",
+        "salary": 60000,
+        "department": "Human resources"
+    }
+]
