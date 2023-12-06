@@ -45,27 +45,27 @@ app.get('/employees', (req, res) => {
                 res.status(404).send('Employee not found'); // Send 404 status if employee not found
             }
         } else if (req.query.department) {
-            // If 'name' parameter is present, filter employees by name
+            // If department parameter is present, filter employees by department
             const department = req.query.department;
 
-            // Find the employee with the specified name
+            // filter out our JSON based on our department
             const departments = employees.filter((emp) => emp.department === department);
 
             if (departments) {
-                res.send(departments); // Send the found employee as the response
+                res.send(departments); // Send the found departments
             } else {
-                res.status(404).send('department not found'); // Send 404 status if employee not found
+                res.status(404).send('Department not found'); // Send 404 status if department not found
             }
         }
         else if (req.query.salary) {
-            // If 'name' parameter is present, filter employees by name
+            // If salary parameter is present, filter employees by salary
             const employeeSalary = parseInt(req.query.salary);
 
-            // Find the employee with the specified name
+            // Find the employees with the specified salary
             const salaries = employees.filter((emp) => emp.salary === employeeSalary);
 
             if (salaries) {
-                res.send(salaries); // Send the found employee as the response
+                res.send(salaries); // Send the found salaries as the response
             } else {
                 res.status(404).send('department not found'); // Send 404 status if employee not found
             }
