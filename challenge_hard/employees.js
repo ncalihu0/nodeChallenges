@@ -1,87 +1,104 @@
-// Import required modules
-const express = require('express'); // Express framework for building APIs
-const fs = require('fs'); // File System module for file operations
+//Import all required modules
+const express = require('express') // Express framework for building APIs
+const fs = require('fs') // File System module for file operations
 
-// Create an Express application
-const app = express();
+// Create an Express application, essentially its an object which Routing HTTP requests; see for example, app.METHOD and app.param.
+// Configuring middleware; see app.route.
+// Rendering HTML views; see app.render.
+// Registering a template engine; see app.engine.
+const app = express()
 const port = 3000; // Set the port for the server to listen on
 
-// Endpoint to get all employees or a specific employee by ID or name
-app.get('/employees', (req, res) => {
-    // Read the content of the 'employees.json' file asynchronously
-    fs.readFile('employees.json', 'utf8', (err, data) => {
-        if (err) {
-            console.error(err);
-            res.status(500).send('Internal Server Error');
-            return;
-        }
+//Get our data from the employees.json files and parse it
+const dataString = fs.readFileSync('employees.json', 'utf-8');
+const data = JSON.parse(dataString)
 
-        // Parse the JSON data from the file
-        const employees = JSON.parse(data);
-
-        // Check if query parameters are present
-        if (req.query.id) {
-            // If 'id' parameter is present, filter employees by ID
-            const employeeID = parseInt(req.query.id);
-
-            // Find the employee with the specified ID
-            const employee = employees.find((emp) => emp.employeeID === employeeID);
-
-            if (employee) {
-                res.send(employee); // Send the found employee as the response
-            } else {
-                res.status(404).send('Employee not found'); // Send 404 status if employee not found
-            }
-        } else if (req.query.name) {
-            // If 'name' parameter is present, filter employees by name
-            const employeeName = req.query.name;
-
-            // Find the employee with the specified name
-            const employee = employees.find((emp) => emp.name === employeeName);
-
-            if (employee) {
-                res.send(employee); // Send the found employee as the response
-            } else {
-                res.status(404).send('Employee not found'); // Send 404 status if employee not found
-            }
-        } else if (req.query.department) {
-            // If department parameter is present, filter employees by department
-            const department = req.query.department;
-
-            // filter out our JSON based on our department
-            const departments = employees.filter((emp) => emp.department === department);
-
-            if (departments) {
-                res.send(departments); // Send the found departments
-            } else {
-                res.status(404).send('Department not found'); // Send 404 status if department not found
-            }
-        }
-        else if (req.query.salary) {
-            // If salary parameter is present, filter employees by salary
-            const employeeSalary = parseInt(req.query.salary);
-
-            // Find the employees with the specified salary
-            const salaries = employees.filter((emp) => emp.salary === employeeSalary);
-
-            if (salaries) {
-                res.send(salaries); // Send the found salaries as the response
-            } else {
-                res.status(404).send('department not found'); // Send 404 status if employee not found
-            }
-        }
-
-        else {
-            // If no query parameters, send all employees as the response
-            res.send(employees);
-        }
-    });
-});
 
 // Default route to handle requests to the root URL
-app.get('/', (req, res) => {
-    res.send('Welcome!. Use /employees to get employee data.');
-});
+app.get('', (req, res) => {
+    // Send a welcome message with instructions on how to use the API
+    res.send(`<h3>Welcome! Use localhost:${port}/employees to access employees </h3> 
+    <h4>Use localhost:${port}/employees/employeeID to access a specific employee</h4>
+    <h4>Use localhost:${port}/employees/division/department to access departments</h4>
+    <h4>Use localhost:${port}/employees/earnings/salary to access a specific employee</h4>
+    `)
+})
+
+
+// Endpoint to get all employees from the JSON file
+//The status codes goes as follows: 
+// Informational responses (100 – 199)
+// Successful responses (200 – 299)
+// Redirection messages (300 – 399)
+// Client error responses (400 – 499)
+// Server error responses (500 – 599)
+app.get('/employees', (req, res) => {
+    if (data === undefined) {
+        res.status(500).send('Internal Server Error');
+    } else {
+        res.send(data);
+    }
+})
+
+//Endpoint to get a specific employee from the JSON file
+app.get('/employees/:employeeID', (req, res) => {
+    if (data === undefined) {
+        res.status(500).send('Internal Server Error');
+    } else {
+        // Get the employee ID from the request parameters
+        const employeeID = parseInt(req.params.employeeID);
+        // Find the employee with the specified ID and compare it to the one requested 
+        const employee = data.find((emp) => emp.employeeID === employeeID);
+        if (employee) {
+            res.send(employee); // Send the found employee as the response
+        } else {
+            res.status(404).send('Employee not found'); // Send 404 status if employee not found
+        }
+    }
+
+})
+
+//Endpoint to find all employees with the same department
+app.get('/employees/division/:department', (req, res) => {
+    if (data === undefined) {
+        res.status(500).send('Internal Server Error');
+    } else {
+        //  Get the department from the request parameters
+        const str = req.params.department
+        //Makes sure that even though the department is entered in all lower case, the first letter is capitalize to match our JSON file
+        const department = str[0].toUpperCase() + str.slice(1);
+        // Filter employees based on the specified department
+        const departments = data.filter((dep) => dep.department === department);
+        if (departments.length !== 0) {
+            // Send the array of departments as the response
+            res.send(departments);
+        } else {
+            res.status(404).send('Department not found'); // Send 404 status if department not found
+        }
+    }
+
+})
+
+
+
+//Endpoint to find employees with the same salary
+app.get('/employees/earnings/:salary', (req, res) => {
+    if (data === undefined) {
+        res.status(500).send('Internal Server Error');
+    } else {
+        //  Get the department from the request parameters
+        const salary = parseInt(req.params.salary);
+        // Filter employees based on the specified department
+        const salaries = data.filter((sal) => sal.salary === salary);
+        if (salaries.length !== 0) {
+            // Send the array of departments as the response
+            res.send(salaries);
+        } else {
+            res.status(404).send('Department not found'); // Send 404 status if department not found
+        }
+    }
+
+})
 
 // Start the server
 app.listen(port, () => {
